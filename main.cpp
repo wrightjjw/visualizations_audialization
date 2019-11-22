@@ -10,8 +10,7 @@
 #include "MergeSorter.h"
 
 
-using namespace tsgl;
-using namespace tsal;
+using namespace avlib;
 
 int main(int argc, char **argv) {
 

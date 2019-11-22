@@ -11,6 +11,8 @@
 #include "AudialVisualization.h"
 
 
+namespace avlib {
+
 cxxopts::ParseResult parse( int argc, char **argv ) {
 
     try {
@@ -25,13 +27,13 @@ cxxopts::ParseResult parse( int argc, char **argv ) {
             ("help", "Print help")
             ("a, audial", "play audialization using TSAL", cxxopts::value<bool>()->default_value("false"))
             ("v, visual", "show visualization using TSGL", cxxopts::value<bool>()->default_value("false"))
-            ("h, window-height", "TSGL window height", cxxopts::value<int>()->default_value("1024"))
-            ("w, window-width", "TSGL window width", cxxopts::value<int>()->default_value("1024"))
+            ("h, canvas-height", "TSGL canvas height", cxxopts::value<int>()->default_value("1024"))
+            ("w, canvas-width", "TSGL canvas width", cxxopts::value<int>()->default_value("1024"))
             ("t, threads", "number of threads to use", cxxopts::value<int>()->default_value("1"));
 
         auto results =  options.parse(argc, argv);
 
-        if ( results.count("help") ) {
+        if( results.count("help") ) {
             std::cout << options.help({"", "Group"}) << std::endl;
             exit(0);
         }
@@ -42,38 +44,43 @@ cxxopts::ParseResult parse( int argc, char **argv ) {
         std::cout << "error parsing options: " << e.what() << std::endl;
         exit(1);
     }
-
 }
 
 AudialVisualization::AudialVisualization( int argc, char **argv ) {
 
     auto result = parse(argc, argv);
     
-    if ( result["audial"].as<bool>() ) {
-        setAudialization( true );
+    if( result["canvas-height"].as<int>() > 0 ) {
+        setCanvasHeight( result["canvas-height"].as<int>() );
+    }
+    if( result["canvas-width"].as<int>() > 0 ) {
+        if( result["canvas-width"].as<int>() < 10 ) { //don't make the canvas any smaller than this
+            setCanvasWidth( 100 );
+        }
+        setCanvasWidth( result["canvas-width"].as<int>() );
+    }
+    if( result["threads"].as<int>() > omp_get_num_procs() ) {
+        setNumThreads( omp_get_num_procs() );
+    } else {
+        setNumThreads( result["threads"].as<int>() );
+    }
+    setAudialization( result["audial"].as<bool>() );
+    setVisualization( result["visual"].as<bool>() );
+
+}
+
+Canvas* AudialVisualization::createCanvas() {
+
+    if( showVisualization() ) {
+        canvas = new Canvas(0, 0, getCanvasWidth(), getCanvasHeight(), "Canvas");
+    }
+}
+
+Mixer* AudialVisualization::createMixer() {
+
+    if( playAudialization() ) {
         mixer = new Mixer();
     }
-    if ( result["visual"].as<bool>() ) {
-        setVisualization( true );
-        canvas = new Canvas(0, 0, 1024, 1024, "Wowowowowow it works");
-    }
-    // if ( result["window-height"].as<int>() > 0 ) {
-    //     setWindowHeight( result["window-height"].as<int>() )
-    // }
-    // if ( result["window-width"].as<int>() > 0 ) {
-    //     setWindowWitdth( result["window-width"].as<int>() );
-    // }
-
-    setNumThreads( result["threads"].as<int>() );
-
-}
-
-Canvas* AudialVisualization::getCanvas() {
-    return canvas;
-}
-
-Mixer* AudialVisualization::getMixer() {
-    return mixer;
 }
 
 void AudialVisualization::setVisualization(const bool b) {
@@ -91,15 +98,15 @@ void AudialVisualization::setNumThreads(const int n) {
     num_threads = n;
 }
 
-// void AudialVisualization::setWindowHeight(const int h) {
+void AudialVisualization::setCanvasHeight(const int h) {
 
-//     window_height = h;
-// }
+    canvas_height = h;
+}
 
-// void AudialVisualization::setWindowWidth(const int w) {
+void AudialVisualization::setCanvasWidth(const int w) {
 
-//     window_width = w;
-// }
+    canvas_width = w;
+}
 
 bool AudialVisualization::showVisualization() const {
 
@@ -116,18 +123,20 @@ int AudialVisualization::getNumThreads() const {
     return num_threads;
 }
 
-// int AudialVisualization::getWindowHeight() const {
+int AudialVisualization::getCanvasHeight() const {
 
-//     return window_height;
-// }
+    return canvas_height;
+}
 
-// int AudialVisualization::getWindowWidth() const {
+int AudialVisualization::getCanvasWidth() const {
 
-//     return window_width;
-// }
+    return canvas_width;
+}
 
 AudialVisualization::~AudialVisualization() {
 
     delete canvas;
     delete mixer;
+}
+
 }

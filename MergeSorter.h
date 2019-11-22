@@ -8,25 +8,24 @@
  * 
  */
 
-#ifndef MergeSort_H
-#define MergeSort_H
+#ifndef MergeSorter_H
+#define MergeSorter_H
 
-#include "SortingAudialVisualizations.h"
+#include "SortingAudialVisualization.h"
 
+
+namespace avlib {
 
 class MergeSorter : public SortingAudialVisualization {
 
-    public:
-        enum MergeState {
-            S_MERGE = 1,
-            S_SHIFT = 2,
-            S_WAIT = 3,
-            S_DONE = 4,
-            S_HIDE = 5
-        };
+private:
+    std::vector<ThreadSynth> voices;
 
-        MergeSorter( int argc, char **argv );
-        void run();
+public:
+    MergeSorter( int argc, char **argv );
+    void run();
 };
+
+}
 
 #endif

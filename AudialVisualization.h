@@ -22,34 +22,38 @@ using namespace tsgl;
 using namespace tsal;
 
 
+namespace avlib {
+
 class AudialVisualization {
 
-    private:
-        int num_threads;
-        bool show_visualizaiton = false;
-        bool play_audialization = false;
-        // int window_height;
-        // int window_width;
-        std::string sound_file = "";
-        Mixer *mixer = nullptr;
-        Canvas *canvas = nullptr;
+private:
+    int num_threads;
+    bool show_visualizaiton;
+    bool play_audialization;
+    int canvas_height;
+    int canvas_width;
+    std::string sound_file;
+    Mixer *mixer = nullptr;
+    Canvas *canvas = nullptr;
 
-    public:
-        Canvas* getCanvas();
-        Mixer* getMixer();
-        AudialVisualization( int argc, char **argv );
-        void setVisualization(const bool b);
-        void setAudialization(const bool b);
-        void setNumThreads(const int n);
-        // void setWindowHeight(const int h);
-        // void setWindowWidth(const int w);
-        bool showVisualization() const;
-        bool playAudialization() const;
-        int getNumThreads() const;
-        ~AudialVisualization();
-        // int getWindowHeight() const;
-        // int getWindowWidth() const;
+public:
+    AudialVisualization( int argc, char **argv );
+    virtual Canvas* createCanvas();
+    virtual Mixer* createMixer();
+    void setVisualization(const bool b);
+    void setAudialization(const bool b);
+    void setNumThreads(const int n);
+    void setCanvasHeight(const int h);
+    void setCanvasWidth(const int w);
+    bool showVisualization() const;
+    bool playAudialization() const;
+    int getNumThreads() const;
+    int getCanvasHeight() const;
+    int getCanvasWidth() const;
+    ~AudialVisualization();
 
 };
+
+}
 
 #endif
