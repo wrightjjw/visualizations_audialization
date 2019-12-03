@@ -25,7 +25,8 @@ namespace avlib {
 
 class SortingAudialVisualization : public AudialVisualization {
 
-private:
+protected:
+    const int MARGIN = 8;
     Mixer *mixer = nullptr;
     Canvas *canvas = nullptr;
 

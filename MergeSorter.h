@@ -13,7 +13,6 @@
 
 #include "SortingAudialVisualization.h"
 
-
 namespace avlib {
 
 class MergeSorter : public SortingAudialVisualization {
@@ -23,6 +22,9 @@ private:
 
 public:
     MergeSorter( int argc, char **argv );
+    void avMergeSort(Canvas& can, std::vector<ThreadSynth>& voices, int threads, int size);
+    void vMergeSort(Canvas& can, int threads, int size);
+    void aMergeSort(std::vector<ThreadSynth>& voices, int threads, int size);
     void run();
 };
 

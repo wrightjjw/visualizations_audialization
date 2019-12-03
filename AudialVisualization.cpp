@@ -74,6 +74,7 @@ Canvas* AudialVisualization::createCanvas() {
     if( showVisualization() ) {
         canvas = new Canvas(0, 0, getCanvasWidth(), getCanvasHeight(), "Canvas");
     }
+    return canvas;
 }
 
 Mixer* AudialVisualization::createMixer() {
@@ -81,6 +82,7 @@ Mixer* AudialVisualization::createMixer() {
     if( playAudialization() ) {
         mixer = new Mixer();
     }
+    return mixer;
 }
 
 void AudialVisualization::setVisualization(const bool b) {

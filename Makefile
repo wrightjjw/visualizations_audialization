@@ -45,13 +45,15 @@ CXXFLAGS=-c -O3 -g3 \
 #Linking flags
 LFLAGS=-o $(TARGET) \
     ${OS_EXTRA_LIB} \
-    ${OS_LDIRS} \
+	${OS_LDIRS} \
     ${OS_EXTRA_LINK} \
     -ltsgl -lfreetype \
     -lGLEW -l${OS_GLFW} \
     -lportaudio \
     -ltsal \
     -lX11 ${OS_GL} -lXrandr \
+	-L/usr/lib \
+	-L/usr/local/lib \
     -fopenmp \
     ${OS_LFLAGS}
 
