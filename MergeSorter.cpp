@@ -1,5 +1,5 @@
 /**
- * MergeSort.cpp defines the methods and algorithm required to make the audial/visualizaiton for merge sort
+ * MergeSorter.cpp defines the methods and algorithm required to make the audial/visualizaiton for merge sort
  * 
  * Who: Nate Herder
  * When: 11/06/2019
@@ -11,13 +11,6 @@
 
 
 namespace avlib {
-
-
-MergeSorter::MergeSorter( int argc, char **argv ) : SortingAudialVisualization(argc, argv) {
-
-}
-
-//const int MARGIN = 8;    // Border for drawing
 
 enum MergeState {
   S_MERGE = 1,
@@ -109,6 +102,10 @@ struct sortData {
   }
 };
 
+MergeSorter::MergeSorter( int argc, char **argv ) : SortingAudialVisualization(argc, argv) {
+
+}
+
 /*!
  * \brief Visualization of the bottom-up mergesort algorithm.
  * \details Utilizes the sortData struct and sorts a number of items using the mergesort algorithm.
@@ -121,7 +118,7 @@ struct sortData {
 void MergeSorter::avMergeSort(Canvas& can, std::vector<ThreadSynth>& voices, int threads, int size) {
   can.start();
   const int IPF = 1;                    // Iterations per frame
-  const int maxNumber = 1200;
+  const int maxNumber = 500;
   int* numbers = new int[size];       // Array to store the data
   for (int i = 0; i < size; i++)
     numbers[i] = rand() % (can.getWindowHeight() - MARGIN);
@@ -336,18 +333,17 @@ void MergeSorter::run() {
 
   int num_threads = getNumThreads();
 
-  Canvas *canvas;
-  Mixer *mixer;
+  // Canvas *canvas;
+  // Mixer *mixer;
 
   if( showVisualization() ) {
-    canvas = createCanvas();
+    createCanvas();
   }
   if( playAudialization() ) {
-    mixer = createMixer();
+    createMixer();
   }
 
   if( playAudialization() ) {
-    //std::vector<ThreadSynth> 
     voices = std::vector<ThreadSynth>(num_threads, ThreadSynth(mixer));
     for (unsigned i = 0; i < voices.size(); i++) {
       mixer->add(voices[i]);
@@ -363,13 +359,12 @@ void MergeSorter::run() {
   if( showVisualization() && playAudialization() ) {
     avMergeSort(*canvas, voices, num_threads, (getCanvasWidth()-MARGIN));
   } else if( showVisualization() ) {
-    vMergeSort(*canvas, num_threads, (getCanvasWidth()-MARGIN));
+      vMergeSort(*canvas, num_threads, (getCanvasWidth()-MARGIN));
   } else if( playAudialization() ) {
-    aMergeSort(voices, num_threads, (getCanvasWidth()-MARGIN));
+      aMergeSort(voices, num_threads, (getCanvasWidth()-MARGIN));
   } else {
     std::exit(0);
   }
-  
 
 }
 

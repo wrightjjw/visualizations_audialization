@@ -21,13 +21,13 @@ Canvas* SortingAudialVisualization::createCanvas() {
 
     // for sorting algorithms make the canvas = width / 2
     setCanvasWidth(getCanvasWidth() + MARGIN);
-    canvas = new Canvas(0, 0, getCanvasWidth(), (getCanvasWidth()/2), "Canvas");    //this could be bad.. because someone could make multiple
+    canvas = new Canvas(0, 0, getCanvasWidth(), (getCanvasWidth()/2), "Canvas");    //this could be bad.. because someone could make multiple maybe make singleton?
     return canvas;
 }
 
 Mixer* SortingAudialVisualization::createMixer() {
 
-    mixer = new Mixer(); //this could be bad.. because someone could make multiple
+    mixer = new Mixer(); //this could be bad.. because someone could make multiple maybe make singleton?
     return mixer;
 }
 

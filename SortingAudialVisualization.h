@@ -29,11 +29,14 @@ protected:
     const int MARGIN = 8;
     Mixer *mixer = nullptr;
     Canvas *canvas = nullptr;
+    std::vector<ThreadSynth> voices;
+    //maybe store ColorFloat colors here to use in visualizations (RED, BLACK, WHITE)
 
 public:
     SortingAudialVisualization( int argc, char **argv );
     Canvas* createCanvas();
     Mixer* createMixer();
+    //maybe think about making getter for the canvas and  thread synth vector
     ~SortingAudialVisualization();
 };
 

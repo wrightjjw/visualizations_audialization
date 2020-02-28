@@ -29,6 +29,7 @@ cxxopts::ParseResult parse( int argc, char **argv ) {
             ("v, visual", "show visualization using TSGL", cxxopts::value<bool>()->default_value("false"))
             ("h, canvas-height", "TSGL canvas height", cxxopts::value<int>()->default_value("1024"))
             ("w, canvas-width", "TSGL canvas width", cxxopts::value<int>()->default_value("1024"))
+            //("s, sorting-algorithm", "sorting algorithm (merge, bubble)", cxxopts::value<std::string>())
             ("t, threads", "number of threads to use", cxxopts::value<int>()->default_value("1"));
 
         auto results =  options.parse(argc, argv);

@@ -1,6 +1,6 @@
 #Target to make and objects needed
 TARGET = main
-OBJS = $(TARGET).o MergeSorter.o SortingAudialVisualization.o AudialVisualization.o
+OBJS = $(TARGET).o MergeSorter.o BubbleSorter.o InsertionSorter.o SortingAudialVisualization.o AudialVisualization.o
 
 #Compiler, remove command, and OS we're working on
 CC = g++

@@ -8,15 +8,22 @@
  */
 
 #include "MergeSorter.h"
+#include "BubbleSorter.h"
+#include "InsertionSorter.h"
 
 
 using namespace avlib;
 
 int main(int argc, char **argv) {
 
-    MergeSorter m(argc, argv);
+    // MergeSorter m(argc, argv);
+    // m.run();
 
-    m.run();
+    // BubbleSorter b(argc, argv);
+    // b.run();
+
+    InsertionSorter i(argc, argv);
+    i.run();
 
     return 0;
 }
