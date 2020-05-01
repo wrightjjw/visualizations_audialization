@@ -9,10 +9,9 @@
  *
  */
 
-#ifndef SortingAudialVisualization_H
-#define SortingAudialVisualization_H
+#pragma once
 
-#include <string.h>
+#include <string>
 #include "AudialVisualization.h"
 #include "tsgl.h"
 
@@ -22,14 +21,24 @@ using namespace tsal;
 namespace avlib {
 
 class SortingAudialVisualization : public AudialVisualization {
- public:
-  SortingAudialVisualization(int argc, char** argv);
-  Canvas* createCanvas();
+private:
+  bool even_data_chunks;
+  bool main_thread;
+  int block_size;
+  int number_normal_block_size;
+
+public:
+  SortingAudialVisualization(int argc, char** argv, bool value = true);
+  Canvas* createCanvas(std::string canvas_name);
   Mixer* createMixer();
-  // maybe think about making getter for the canvas and thread synth vector
+  void setEvenDataChunks(const int v);
+  bool getEvenDataChunks() const;
+  void setBlockSize(const int bs);
+  int getBlockSize() const;
+  void setNumberNormalBlockSize(const int n);
+  int getNumberNormalBlockSize() const;
+  bool getMainThread();
   ~SortingAudialVisualization();
 };
 
 }
-
-#endif

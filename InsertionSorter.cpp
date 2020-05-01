@@ -12,82 +12,110 @@
 
 namespace avlib {
 
-InsertionSorter::InsertionSorter(int argc, char** argv) : SortingAudialVisualization(argc, argv) {
+InsertionSorter::InsertionSorter(int argc, char** argv, bool value) : SortingAudialVisualization(argc, argv, value) {
 
 }
 
-void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voices, int size) {
+void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voices, int data_elements) {
+  int cwh = getCanvasHeight();
+  ColorFloat color = RED;
+  ColorFloat bg = BLACK;
+  ColorFloat sort_done_color = WHITE;
+  
+  int block_size = getBlockSize();
+  int number_normal_block_size = getNumberNormalBlockSize();
+  int block_size_plus_one = block_size + 1;
   if (showVisualization()) {
     can->start();
   }
 
   // Generate data
-  int max_element;
-  int* data = new int[size];
-  for (int i = 0; i < size; i++) {
-    data[i] = rand() % (getCanvasHeight() -
-                        MARGIN);  // map data height into range of canvas
+  int* numbers = new int[data_elements];
+  for (int i = 0; i < data_elements; i++) {
+    numbers[i] = rand() % (getCanvasHeight());
   }
-  auto result = std::max_element(data, data+size);
-  max_element = *result;
-
-  int cwh = getCanvasHeight() -
-            MARGIN / 2;  // canvas window height //- MARGIN/2 or just
-                         // -MARGIN...look into this eventually
-  ColorFloat color = RED;
-  ColorFloat bg = BLACK;
 
   // draw the original random data
   if (showVisualization()) {
-    for (int i = 0; i < size; i++) {
-      can->drawLine(i, cwh, i, (cwh - data[i]), color);
+    for (int i = 0; i < data_elements; i++) {
+      if( i < number_normal_block_size ) {
+        can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], color);
+      } else {
+        can->drawRectangle(((number_normal_block_size*block_size)+(((i-number_normal_block_size)*block_size_plus_one)) ), (cwh-numbers[i]), block_size_plus_one, numbers[i], color);
+      }
     }
   }
 
   int insertValue;
-  int j;
-
+  int j = 0;
   // begin sorting
-  for (int i = 1; i < size; i++) {
-    insertValue = data[i];
+  for (int i = 1; i < data_elements; i++) {
+    insertValue = numbers[i];
     j = i;
-    while (j > 0 && data[j - 1] > insertValue) {
+    while (j > 0 && numbers[j - 1] > insertValue) {
+
+      if(showVisualization()) {
+        if(j < number_normal_block_size) {
+          can->drawRectangle( (j*block_size), 0, block_size, cwh, bg );
+          can->drawRectangle( ((j-1)*block_size), 0, block_size, cwh, bg );
+        } else if(j == number_normal_block_size) {
+          can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), 0, block_size_plus_one, cwh, bg );
+          can->drawRectangle( ((j-1)*block_size), 0, block_size, cwh, bg );
+        } else {
+          can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), 0, block_size_plus_one, cwh, bg);
+          can->drawRectangle( (((j-1)*number_normal_block_size)+((j-1)-number_normal_block_size)*block_size_plus_one), 0, block_size_plus_one, cwh, bg);
+        }
+      }
+
+      if (playAudialization()) {
+        MidiNote note = Util::scaleToNote(numbers[j], std::make_pair(0, getCanvasHeight()), std::make_pair(C3, C7));
+        voices.at(0).play(note, Timing::MILLISECOND, 30);
+      }
+      numbers[j] = numbers[j - 1];
       if (showVisualization()) {
         can->sleep();
-        can->drawLine(j, cwh, j, 0, bg);
-        can->drawLine(j - 1, cwh, j - 1, 0, bg);
-      }
-      if (playAudialization()) {
-        MidiNote note = Util::scaleToNote(data[j], std::make_pair(0, max_element), std::make_pair(C3, C7));
-        voices.at(0).play(note, Timing::MILLISECOND, 5);  // getCanvasHeight() //C2 + 55 * ((double)data[j] / getCanvasHeight())
-      }
-      data[j] = data[j - 1];
-      if (showVisualization()) {
-        can->drawLine(j - 1, cwh, j - 1, (cwh - insertValue), color);
-        can->drawLine(j, cwh, j, (cwh - data[j]), color);
+        if(j < number_normal_block_size) {
+          can->drawRectangle( (j*block_size), (cwh-numbers[j]), block_size, numbers[j], color );
+          can->drawRectangle( ((j-1)*block_size), (cwh-numbers[j-1]), block_size, numbers[j-1], color );
+        } else if(j == number_normal_block_size) {
+          can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j]), block_size_plus_one, numbers[j], color );
+          can->drawRectangle( ((j-1)*block_size), (cwh-numbers[j-1]), block_size, numbers[j-1], color );
+        } else {
+          can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j]), block_size_plus_one, numbers[j], color );
+          can->drawRectangle( (((j-1)*number_normal_block_size)+((j-1)-number_normal_block_size)*block_size_plus_one), (cwh-numbers[j-1]), block_size_plus_one, numbers[j-1], color );
+        }
       }
       j--;
     }
-    data[j] = insertValue;
+    numbers[j] = insertValue;
+  }
+
+  //make sure that the ThreadSynth stops playing
+  if(playAudialization()) {
+    voices.at(0).stop();
   }
 
   // after sorting turn data white
   if (showVisualization()) {
-    ColorFloat wht = WHITE;
-    for (int i = 0; i < size; i++) {
-      can->drawLine(size - i, cwh, size - i, data[i], wht);
+    for (int i = 0; i < data_elements; i++) {
+      if(i < number_normal_block_size) {
+        can->drawRectangle( (i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color );
+      } else {
+        can->drawRectangle( ((i*number_normal_block_size)+((i-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color );
+      }
     }
-  }
-
-  if (showVisualization()) {
+  
     can->wait();
   }
-  delete[] data;
+
+  can->wait();
+  delete[] numbers;
 }
+
 
 void InsertionSorter::run() {
   if (showVisualization()) {
-    createCanvas();
+    createCanvas("Insertion Sort");
   }
   if (playAudialization()) {
     createMixer();
@@ -105,12 +133,13 @@ void InsertionSorter::run() {
   }
 
   if (showVisualization() || playAudialization()) {
-    InsertionSort(canvas, voices, (getCanvasWidth() - MARGIN));
+    InsertionSort(canvas, voices, getDataAmount());
   } else {
     std::cout << "neither -v or -a flags set" << std::endl;
     std::exit(0);
   }
 
 }
+
 
 }

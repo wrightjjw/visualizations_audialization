@@ -12,98 +12,115 @@
 
 namespace avlib {
 
-BubbleSorter::BubbleSorter(int argc, char **argv) : SortingAudialVisualization(argc, argv) {
+BubbleSorter::BubbleSorter(int argc, char **argv, bool value) : SortingAudialVisualization(argc, argv, value) {
 
 }
 
-void BubbleSorter::BubbleSort(Canvas *can, std::vector<ThreadSynth> &voices, int size) {
+
+void BubbleSorter::BubbleSort(Canvas *can, std::vector<ThreadSynth> &voices, int data_elements) {
+  int cwh = getCanvasHeight();  // canvas window height
+  ColorFloat color = RED;
+  ColorFloat bg = BLACK;
+  ColorFloat sort_done_color = WHITE;
+
+  int block_size = getBlockSize();
+  int number_normal_block_size = getNumberNormalBlockSize();
+  int block_size_plus_one = block_size + 1;
   if (showVisualization()) {
     can->start();
   }
 
   // generate the data to sort
-  int max_element;
-  int *numbers = new int[size];  // Array to store the data
-  for (int i = 0; i < size; i++) {
-    numbers[i] = rand() % (getCanvasHeight() - MARGIN);
+  int *numbers = new int[data_elements];  // Array to store the data
+  for (int i = 0; i < data_elements; i++) {
+    numbers[i] = rand() % getCanvasHeight();
   }
-  auto result = std::max_element(numbers, numbers+size);
-  max_element = *result;
-
-  int cwh = getCanvasHeight() - MARGIN / 2;  // canvas window height
-  ColorFloat color = RED;
-  ColorFloat bg = BLACK;
 
   // draw the original random data
   if (showVisualization()) {
-    for (int i = 0; i < size; i++) {
-      can->drawLine(i, cwh, i, (cwh - numbers[i]), color);
+    for (int i = 0; i < data_elements; i++) {
+      if( i < number_normal_block_size ) {
+        can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], color);
+      } else {
+        can->drawRectangle(((number_normal_block_size*block_size)+(((i-number_normal_block_size)*block_size_plus_one)) ), (cwh-numbers[i]), block_size_plus_one, numbers[i], color);
+      }
     }
   }
 
-  // begin sorting
   int temp;
-  for (int i = 0; i < size; i++) {
-    for (int j = 1; j < size - i; j++) {
-      if (showVisualization()) {
-        can->sleep();  // recommended to sleep before drawing
-      }
-      if (playAudialization()) {
-        MidiNote note = Util::scaleToNote(numbers[j], std::make_pair(0, max_element), std::make_pair(C3, C7));
-        voices.at(0).play(note, Timing::MICROSECOND, 100);  //C3 + 40 * ((double)numbers[j] / getCanvasHeight())
-      }
-
-      if (numbers[j] < numbers[j - 1]) {
-        if (showVisualization()) {
-          can->drawLine(j, cwh, j, 0, bg);
-          can->drawLine(j - 1, cwh, j - 1, 0, bg);
-        }
+  // begin sorting
+  for (int i = 0; i < data_elements; i++) {
+    for (int j = 1; j < data_elements - i; j++) {
+      if (numbers[j] < numbers[j-1]) {
         temp = numbers[j];
-        numbers[j] = numbers[j - 1];
-        numbers[j - 1] = temp;
+        numbers[j] = numbers[j-1];
+        numbers[j-1] = temp;
+
+        if (playAudialization()) {
+          MidiNote note = Util::scaleToNote(numbers[j], std::make_pair(0, getCanvasHeight()), std::make_pair(C3, C7));
+          voices.at(0).play(note, Timing::MICROSECOND, 50);
+        }
+
         if (showVisualization()) {
-          can->drawLine(j - 1, cwh, j - 1, (cwh - numbers[j - 1]), color);
-          can->drawLine(j, cwh, j, (cwh - numbers[j]), color);
+          can->sleep();  // recommended to sleep before drawing
+          if(j <= number_normal_block_size) {
+            can->drawRectangle((j*block_size), 0, block_size, cwh, bg);
+            can->drawRectangle((j*block_size), (cwh-numbers[j]), block_size, numbers[j], color);
+            can->drawRectangle(((j-1)*block_size), 0, block_size, cwh, bg);
+            can->drawRectangle(((j-1)*block_size), (cwh-numbers[j-1]), block_size, numbers[j-1], color);
+          } else {
+            can->drawRectangle(((number_normal_block_size*block_size)+(((j)-number_normal_block_size)*block_size_plus_one)), 0, block_size_plus_one, cwh, bg);
+            can->drawRectangle(((number_normal_block_size*block_size)+(((j)-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j]), block_size_plus_one, numbers[j], color );
+            can->drawRectangle(((number_normal_block_size*block_size)+(((j-1)-number_normal_block_size)*block_size_plus_one)), 0, block_size_plus_one, cwh, bg);
+            can->drawRectangle(((number_normal_block_size*block_size)+(((j-1)-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j-1]), block_size_plus_one, numbers[j-1], color);
+          }
         }
       }
     }
   }
 
-  // after sorting turn data white
-  ColorFloat wht = WHITE;
-  for (int i = 0; i < size; i++) {
-    can->drawLine(size - i, cwh, size - i, numbers[i], wht);
+  if(playAudialization()) {
+    voices.at(0).stop();
   }
 
-  can->wait();
+  //after sorting turn data white
+  if( showVisualization()) {
+    for (int i = 0; i < data_elements; i++) {
+      if(i < number_normal_block_size) {
+        can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color);
+      } else {
+        can->drawRectangle(((number_normal_block_size*block_size)+((i-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color);
+      }
+    }
+
+    can->wait();
+  }
+
   delete[] numbers;
 }
 
 void BubbleSorter::run() {
   if (showVisualization()) {
-    createCanvas();
-  }
-  if (playAudialization()) {
-    createMixer();
-  }
-
-  if (playAudialization()) {
-    voices = std::vector<ThreadSynth>(1, ThreadSynth(mixer));
-    mixer->add(voices[0]);
-    voices[0].setVolume(0.5);
-    voices[0].setEnvelopeActive(false);
-  }
-
-  if (showVisualization()) {
+    createCanvas("Bubble Sort");
     canvas->setBackgroundColor(BLACK);
   }
 
+  if (playAudialization()) {
+    createMixer();
+
+    voices = std::vector<ThreadSynth>(1, ThreadSynth(mixer));
+    mixer->add(voices[0]);
+    //voices[0].setVolume(0.5);
+    voices[0].setEnvelopeActive(false);
+  }
+
   if (showVisualization() || playAudialization()) {
-    BubbleSort(canvas, voices, (getCanvasWidth() - MARGIN));
+    BubbleSort(canvas, voices, getDataAmount());
   } else {
     std::cout << "neither -v or -a flags set" << std::endl;
     std::exit(0);
   }
 }
+
 
 }

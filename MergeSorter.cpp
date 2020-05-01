@@ -111,264 +111,21 @@ struct sortData {
   }
 };
 
-MergeSorter::MergeSorter(int argc, char** argv) : SortingAudialVisualization(argc, argv) {
+MergeSorter::MergeSorter(int argc, char** argv, bool value) : SortingAudialVisualization(argc, argv, value) {
 
 }
-
-/*!
- * \brief Visualization of the bottom-up mergesort algorithm.
- * \details Utilizes the sortData struct and sorts a number of items using the
- * mergesort algorithm. \details Uses lines to represent the items being sorted.
- * \details At the start, the items being sorted are all divided.
- * \details Once items have been sorted in one divided section, then sections
- * are merged and the process repeats itself. \details Different colors
- * represent different sections being sorted. \details Once all items have been
- * sorted and merged, the animation stops and all lines are colored white.
- */
-// void MergeSorter::avMergeSort(Canvas& can, std::vector<ThreadSynth>& voices, int threads, int size) {
-//   can.start();
-//   const int IPF = 1;                    // Iterations per frame
-//   const int maxNumber = 500;
-//   int* numbers = new int[size];       // Array to store the data
-
-//   for (int i = 0; i < size; i++) {
-//     numbers[i] = rand() % (can.getWindowHeight() - MARGIN);
-//   }
-
-//   int bs = size / threads;
-//   int ex = size % threads;
-//   sortData** sd = new sortData*[threads];
-//   int f = 0;
-//   int l = (ex == 0) ? bs-1 : bs;
-//   for (int i = 0; i < threads; ++i) {
-//     sd[i] = new sortData( numbers, f, l, Colors::highContrastColor(i) );
-//     f = l+1;
-//     if (i < ex-1) l += (bs + 1);
-//     else          l += bs;
-//   }
-//   #pragma omp parallel num_threads( threads )
-//   {
-//       int tid = omp_get_thread_num();
-//       auto& voice = voices[tid];
-//       while (can.isOpen()) {
-//           can.sleep();
-//           if (sd[tid]->state == S_WAIT) {  //Merge waiting threads
-//             voice.stop();
-//             if ((tid % sd[tid]->size) > 0)
-//               sd[tid]->state = S_DONE;
-//             else {
-//               int next = tid+sd[tid]->size/2;
-//               if (next < threads && sd[next]->state == S_DONE) {
-//                 sd[next]->state = S_HIDE;
-//                 sd[tid]->restart(sd[next]->last);
-//               }
-//             }
-//           }
-//           for (int i = 0; i < IPF; i++) {
-//             sd[tid]->sortStep();
-//           }
-//           can.pauseDrawing();  //Tell the Canvas to stop updating the screen temporarily
-//           int start = MARGIN/2 + sd[tid]->first, height; 
-//           int cwh = can.getWindowHeight() - MARGIN/2;
-//           ColorFloat color;
-//           double number;
-//           if (sd[tid]->state != S_HIDE) {
-//             //Draw a black rectangle over our portion of the screen to cover up the old drawing
-//             can.drawRectangle(start,0,sd[tid]->last - sd[tid]->first,cwh,can.getBackgroundColor());
-//             for (int i = sd[tid]->first; i < sd[tid]->last; ++i, ++start) {
-//                 height = numbers[i];
-//                 number = numbers[i];
-//                  if (i == sd[tid]->left) {
-//                    voice.play(C2 + (tid * 3) + 60 * (number / maxNumber),
-//                    Timing::MICROSECOND, 100);
-//                  }
-//                 if (sd[tid]->state == S_WAIT || sd[tid]->state == S_DONE) {
-//                   color = WHITE;
-//                 }
-//                 else {
-//                   if (i == sd[tid]->right || i == sd[tid]->left)
-//                     color = WHITE;
-//                   else if (i < sd[tid]->left)
-//                     color = sd[tid]->color;
-//                   else if (i >= sd[tid]->fi && i <= sd[tid]->li)
-//                     color = Colors::blend(sd[tid]->color, WHITE, 0.5f);
-//                   else
-//                     color = Colors::blend(sd[tid]->color, BLACK, 0.5f);
-//                 }
-//                 can.drawLine(start, cwh - height, start, cwh, color);
-//             }
-//           }
-//           can.resumeDrawing();  //Tell the Canvas it can resume updating
-//       }
-//   }
-//   can.wait();
-//   for (int i = 0; i < threads; ++i) {
-//     delete sd[i];
-//   }
-//   delete [] sd;
-//   delete [] numbers;
-// }
-
-// void MergeSorter::vMergeSort(Canvas& can, int threads, int size) {
-//   can.start();
-//   const int IPF = 1;                  // Iterations per frame
-//   int* numbers = new int[size];       // Array to store the data
-//   for (int i = 0; i < size; i++) {
-//     numbers[i] = rand() % (can.getWindowHeight() - MARGIN);
-//   }
-
-//   int bs = size / threads;
-//   int ex = size % threads;
-//   sortData** sd = new sortData*[threads];
-//   int f = 0;
-//   int l = (ex == 0) ? bs-1 : bs;
-//   for (int i = 0; i < threads; ++i) {
-//     sd[i] = new sortData(numbers,f,l,Colors::highContrastColor(i));
-//     f = l+1;
-//     if (i < ex-1) {
-//       l += (bs + 1);
-//     } else {
-//       l += bs;
-//     }
-//   }
-//   #pragma omp parallel num_threads(threads)
-//   {
-//       int tid = omp_get_thread_num();
-//       while (can.isOpen()) {
-//           can.sleep();
-//           if (sd[tid]->state == S_WAIT) {  //Merge waiting threads
-//             if ((tid % sd[tid]->size) > 0) {
-//               sd[tid]->state = S_DONE;
-//             }
-//             else {
-//               int next = tid+sd[tid]->size/2;
-//               if (next < threads && sd[next]->state == S_DONE) {
-//                 sd[next]->state = S_HIDE;
-//                 sd[tid]->restart(sd[next]->last);
-//               }
-//             }
-//           }
-//           for (int i = 0; i < IPF; i++) {
-//             sd[tid]->sortStep();
-//           }
-//           can.pauseDrawing();  //Tell the Canvas to stop updating the screen temporarily
-//           int start = MARGIN/2 + sd[tid]->first, height;
-//           int cwh = can.getWindowHeight() - MARGIN/2;
-//           ColorFloat color;
-//           if (sd[tid]->state != S_HIDE) {
-//             //Draw a black rectangle over our portion of the screen to cover up the old drawing
-//             can.drawRectangle(start,0,sd[tid]->last - sd[tid]->first,cwh,can.getBackgroundColor());
-//             for (int i = sd[tid]->first; i < sd[tid]->last; ++i, ++start) {
-//                 height = numbers[i];
-//                 if (sd[tid]->state == S_WAIT || sd[tid]->state == S_DONE) {
-//                   color = WHITE;
-//                 }
-//                 else {
-//                   if (i == sd[tid]->right || i == sd[tid]->left) {
-//                     color = WHITE;
-//                   }
-//                   else if (i < sd[tid]->left) {
-//                     color = sd[tid]->color;
-//                   }
-//                   else if (i >= sd[tid]->fi && i <= sd[tid]->li) {
-//                     color = Colors::blend(sd[tid]->color, WHITE, 0.5f);
-//                   } else {
-//                     color = Colors::blend(sd[tid]->color, BLACK, 0.5f);
-//                   }
-//                 }
-//                 can.drawLine(start, cwh - height, start, cwh, color);
-//             }
-//           }
-//           can.resumeDrawing();  //Tell the Canvas it can resume updating
-//       }
-//   }
-//   can.wait();
-//   for (int i = 0; i < threads; ++i) {
-//     delete sd[i];
-//   }
-//   delete [] sd;
-//   delete [] numbers;
-// }
-
-// void MergeSorter::aMergeSort(std::vector<ThreadSynth>& voices, int threads, int size) {
-//   const int IPF = 1;      // Iterations per frame
-//   const int maxNumber = 100000;
-//   int* numbers = new int[size];       // Array to store the data
-//   for (int i = 0; i < size; i++) {
-//     numbers[i] = rand() % maxNumber;
-//   }
-
-//   int bs = size / threads;
-//   int ex = size % threads;
-//   sortData** sd = new sortData*[threads];
-//   int f = 0;
-//   int l = (ex == 0) ? bs-1 : bs;
-//   for (int i = 0; i < threads; ++i) {
-//     sd[i] = new sortData(numbers,f,l, Colors::highContrastColor(i));
-//     f = l+1;
-//     if (i < ex-1) l += (bs + 1);
-//     else          l += bs;
-//   }
-//   #pragma omp parallel num_threads(threads)
-//   {
-//     int tid = omp_get_thread_num();
-//     auto& voice = voices[tid];
-//     //std::cout << tid << std::endl;
-//     while (true) {
-//       if (sd[tid]->state == S_WAIT) {  //Merge waiting threads
-//         voice.stop();
-
-//         if ((tid % sd[tid]->size) > 0) {
-//           sd[tid]->state = S_DONE;
-//         } else {
-//           int next = tid+sd[tid]->size/2;
-//           if (next < threads && sd[next]->state == S_DONE) {
-//             sd[next]->state = S_HIDE;
-
-//             sd[tid]->restart(sd[next]->last);
-//           }
-//         }
-//       }
-//       for (int i = 0; i < IPF; i++) {
-//         sd[tid]->sortStep();
-//       }
-
-//       double number;
-//       MergeState state = sd[tid]->state;
-//       if (state != S_HIDE && state != S_DONE) {
-//         for (int i = sd[tid]->first; i < sd[tid]->last; ++i) {
-//           number = numbers[i];
-//           // If we are processing the item, play a sound
-//           if (i == sd[tid]->left) {
-//             voice.play(C2 + (tid * 3) + 60 * (number / maxNumber),
-//             Timing::MICROSECOND, 100);
-//           }
-//         }
-//       }
-//     }
-//   }
-//   for (int i = 0; i < threads; ++i) {
-//     delete sd[i];
-//   }
-//   delete [] sd;
-//   delete [] numbers;
-// }
 
 void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int threads, int size) {
   if (showVisualization()) {
     can->start();
   }
   const int IPF = 1;          // Iterations per frame
-  const int maxNumber = 500;  // possibly remove this
 
   // generate the data to sort
-  int max_element;
   int* numbers = new int[size];  // Array to store the data
   for (int i = 0; i < size; i++) {
-    numbers[i] = rand() % (getCanvasHeight() - MARGIN);
+    numbers[i] = rand() % (getCanvasHeight());
   }
-  auto result = std::max_element(numbers, numbers+size);
-  max_element = *result;
 
   int bs = size / threads;
   int ex = size % threads;
@@ -414,11 +171,10 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
       if (showVisualization()) {
         can->pauseDrawing();  // Tell the Canvas to stop updating the screen temporarily
       }
-      int start = MARGIN / 2 + sd[tid]->first, height;
-      int cwh = getCanvasHeight() - MARGIN / 2;
+      int start = sd[tid]->first, height;
+      int cwh = getCanvasHeight();
       ColorFloat color;
       ColorFloat bg = BLACK;
-      double number;
       if (sd[tid]->state != S_HIDE) {
         // Draw a black rectangle over our portion of the screen to cover up the old drawing
         if (showVisualization()) {
@@ -426,11 +182,10 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
         }
         for (int i = sd[tid]->first; i < sd[tid]->last; ++i, ++start) {
           height = numbers[i];
-          number = numbers[i];
           if (i == sd[tid]->left) {
             if(playAudialization()) {
-              MidiNote note = Util::scaleToNote(numbers[i], std::make_pair(0, max_element), std::make_pair(C3, C7));
-              voices.at(tid).play(note, Timing::MICROSECOND, 100); // C2 + (tid * 3) + 60 * (number / maxNumber)
+              MidiNote note = Util::scaleToNote(numbers[i], std::make_pair(0, getCanvasHeight()), std::make_pair(C3, C7));
+              voices.at(tid).play(note, Timing::MICROSECOND, 50);
             }
           }
           if (sd[tid]->state == S_WAIT || sd[tid]->state == S_DONE)
@@ -446,6 +201,9 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
               color = Colors::blend(sd[tid]->color, BLACK, 0.5f);
           }
           if (showVisualization()) {
+            // if( i <= getNumberNormalBlockSize() ) {   //add to this for varying block sizes
+            //   can->drawRectangle();
+            // }
             can->drawLine(start, cwh - height, start, cwh, color);
           }
         }
@@ -454,6 +212,10 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
         can->resumeDrawing();  // Tell the Canvas it can resume updating
       }
     }
+
+    if(playAudialization()) {
+      voices.at(tid).stop();
+    }
   }
 }
 
@@ -461,7 +223,7 @@ void MergeSorter::run() {
   int num_threads = getNumThreads();
 
   if (showVisualization()) {
-    createCanvas();
+    createCanvas("Merge Sort");
     canvas->setBackgroundColor(BLACK);
   }
   if (playAudialization()) {
@@ -476,21 +238,11 @@ void MergeSorter::run() {
   }
 
   if (showVisualization() || playAudialization()) {
-    MergeSort(canvas, voices, num_threads, (getCanvasWidth() - MARGIN));
+    MergeSort(canvas, voices, num_threads, getCanvasWidth());
   } else {
     std::cout << "neither -v or -a flags set" << std::endl;
     std::exit(0);
   }
-
-  // if( showVisualization() && playAudialization() ) {
-  //   avMergeSort(*canvas, voices, num_threads, (getCanvasWidth()-MARGIN));
-  // } else if( showVisualization() ) {
-  //     vMergeSort(*canvas, num_threads, (getCanvasWidth()-MARGIN));
-  // } else if( playAudialization() ) {
-  //     aMergeSort(voices, num_threads, (getCanvasWidth()-MARGIN));
-  // } else {
-  //   std::exit(0);
-  // }
 }
 
 

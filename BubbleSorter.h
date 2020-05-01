@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef BubbleSorter_H
-#define BubbleSorter_H
+#pragma once
 
 #include "SortingAudialVisualization.h"
 
@@ -18,11 +17,9 @@ namespace avlib {
 
 class BubbleSorter : public SortingAudialVisualization {
  public:
-  BubbleSorter(int argc, char **argv);
+  BubbleSorter(int argc, char **argv, bool value = false);
   void run();
-  void BubbleSort(Canvas *can, std::vector<ThreadSynth> &voices, int size);
+  void BubbleSort(Canvas *can, std::vector<ThreadSynth> &voices, int data_elements);
 };
 
 }
-
-#endif

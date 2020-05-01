@@ -8,8 +8,7 @@
  *
  */
 
-#ifndef Audialisualization_H
-#define AudialVisualization_H
+#pragma once
 
 #include <tsgl.h>
 #include <tsal.hpp>
@@ -17,6 +16,7 @@
 #include <omp.h>
 #include <iostream>
 #include <memory>
+#include <string>
 
 using namespace tsgl;
 using namespace tsal;
@@ -30,29 +30,33 @@ protected:
   bool play_audialization;
   int canvas_height;
   int canvas_width;
-  std::string sound_file;
+  int num_algorithms_to_run;
+  std::vector<std::string> sorting_algorithms;
   Mixer *mixer = nullptr;
   Canvas *canvas = nullptr;
   std::vector<ThreadSynth> voices;
-  const int MARGIN = 8;
+  int data_amount;
 
 public:
   AudialVisualization(int argc, char **argv);
-  virtual Canvas *createCanvas();
+  virtual Canvas *createCanvas(std::string canvas_name);
   virtual Mixer *createMixer();
   void setVisualization(const bool b);
   void setAudialization(const bool b);
   void setNumThreads(const int n);
   void setCanvasHeight(const int h);
   void setCanvasWidth(const int w);
+  void setSortingAlgorithm(const std::vector<std::string>& a);
+  void setDataAmount(const int a);
   bool showVisualization() const;
   bool playAudialization() const;
-  int getNumThreads() const;
   int getCanvasHeight() const;
   int getCanvasWidth() const;
+  int getDataAmount() const;
+  int getNumThreads() const;
+  std::vector<std::string> getSortingAlgorithms() const;
   ~AudialVisualization();
 };
 
-}
 
-#endif
+}

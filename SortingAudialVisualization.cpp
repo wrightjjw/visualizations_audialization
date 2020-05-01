@@ -9,27 +9,95 @@
  */
 
 #include "SortingAudialVisualization.h"
+#include "BubbleSorter.h"
+#include "InsertionSorter.h"
+#include "MergeSorter.h"
+#include "SelectionSorter.h"
+#include "ShakerSorter.h"
+#include <cmath>
 
 namespace avlib {
 
-SortingAudialVisualization::SortingAudialVisualization(int argc, char** argv) : AudialVisualization(argc, argv) {
+SortingAudialVisualization::SortingAudialVisualization(int argc, char** argv, bool value) : AudialVisualization(argc, argv), main_thread{value} {
+  if( (getCanvasWidth() % getDataAmount()) == 0 ) {
+    setEvenDataChunks(true);
+    setBlockSize( (getCanvasWidth()/getDataAmount()) );
+    setNumberNormalBlockSize( getDataAmount() );
+  } else {
+    setEvenDataChunks(false);
+    setBlockSize( floor( (getCanvasWidth()/getDataAmount()) ) );
+    setNumberNormalBlockSize( (getDataAmount() - (getCanvasWidth() % getDataAmount())) );
+  }
+
+  std::vector<std::string> sort_run_vector = getSortingAlgorithms();
+
+  if( getMainThread() == true ) {
+    #pragma omp parallel num_threads( sort_run_vector.size() )
+    {
+      int tid = omp_get_thread_num();
+      
+      if(sort_run_vector.at(tid) == "bubble") {
+        BubbleSorter b(argc, argv);
+        b.run();
+      } else if(sort_run_vector.at(tid) == "insertion") {
+        InsertionSorter i(argc, argv);
+        i.run();
+      } else if(sort_run_vector.at(tid) == "merge") {
+        MergeSorter m(argc, argv);
+        m.run();
+      } else if(sort_run_vector.at(tid) == "selection") {
+        SelectionSorter s(argc, argv);
+        s.run();
+      } else if(sort_run_vector.at(tid) == "shaker") {
+        ShakerSorter sh(argc, argv);
+        sh.run();
+      }
+    }
+  }
+
 
 }
 
-Canvas* SortingAudialVisualization::createCanvas() {
-  // for sorting algorithms make the canvas = width / 2
-  setCanvasWidth(getCanvasWidth() + MARGIN);
-  setCanvasHeight((getCanvasWidth() / 2) + MARGIN);
-  canvas = new Canvas(0, 0, getCanvasWidth(), (getCanvasWidth() / 2), "Canvas");  // this could be bad.. because someone could
-                                  // make multiple maybe make singleton?
+Canvas* SortingAudialVisualization::createCanvas(std::string canvas_name) {
+  setCanvasWidth(getCanvasWidth() );
+  setCanvasHeight((getCanvasWidth() / 2)); //height = width/2 for sorts
+  canvas = new Canvas(0, 0, getCanvasWidth(), (getCanvasWidth() / 2), canvas_name);  // this could be bad.. because someone could make multiple maybe make singleton?
   return canvas;
 }
 
 Mixer* SortingAudialVisualization::createMixer() {
-  mixer = new Mixer();  // this could be bad.. because someone could make
-                        // multiple maybe make singleton?
+  mixer = new Mixer();  // this could be bad.. because someone could make multiple maybe make singleton?
   return mixer;
 }
+
+void SortingAudialVisualization::setEvenDataChunks(const int v) {
+  even_data_chunks = v;
+}
+
+bool SortingAudialVisualization::getEvenDataChunks() const {
+  return even_data_chunks;
+}
+
+void SortingAudialVisualization::setBlockSize(const int bs) {
+  block_size = bs;
+}
+
+int SortingAudialVisualization::getBlockSize() const {
+  return block_size;
+}
+
+void SortingAudialVisualization::setNumberNormalBlockSize(const int n) {
+  number_normal_block_size = n;
+}
+
+int SortingAudialVisualization::getNumberNormalBlockSize() const {
+  return number_normal_block_size;
+}
+
+bool SortingAudialVisualization::getMainThread() {
+  return main_thread;
+}
+
 
 SortingAudialVisualization::~SortingAudialVisualization() {
   delete canvas;

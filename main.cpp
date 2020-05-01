@@ -7,21 +7,16 @@
  *
  */
 
-#include "BubbleSorter.h"
-#include "InsertionSorter.h"
-#include "MergeSorter.h"
+#include "SortingAudialVisualization.h"
+#include "LinearSearch.h"
 
 using namespace avlib;
 
 int main(int argc, char **argv) {
-  MergeSorter m(argc, argv);
-  m.run();
 
-  // BubbleSorter b(argc, argv);
-  // b.run();
-
-  // InsertionSorter i(argc, argv);
-  // i.run();
+  LinearSearch ls(argc, argv);
+  ls.run();  
+  //SortingAudialVisualization av(argc, argv);
 
   return 0;
 }
