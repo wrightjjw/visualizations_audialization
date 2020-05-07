@@ -27,6 +27,7 @@ void ShakerSorter::ShakerSort(Canvas *can, std::vector<ThreadSynth> &voices, int
   int block_size_plus_one = block_size + 1;
   if (showVisualization()) {
     can->start();
+    can->sleep();
   }
 
   // generate the data to sort
@@ -35,11 +36,8 @@ void ShakerSorter::ShakerSort(Canvas *can, std::vector<ThreadSynth> &voices, int
     numbers[i] = rand() % getCanvasHeight();
   }
 
-  std::cout << "MADE IT HERE!!!" << std::endl;
-
   // draw the original random data
   if (showVisualization()) {
-    can->sleep();
     for (int i = 0; i < data_elements; i++) {
       if( i < number_normal_block_size ) {
         can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], color);
@@ -49,74 +47,91 @@ void ShakerSorter::ShakerSort(Canvas *can, std::vector<ThreadSynth> &voices, int
     }
   }
 
-  // // begin sorting
-  // while (can.isOpen()) {
-  //   can.sleep();  //Removed the timer and replaced it with an internal timer in the Canvas class
-  //   if (min >= max) return;  // We are done sorting
-  //   for (int i = 0; i < IPF; i++) {
-  //     if (goingUp) {
-  //       if (numbers[pos] > numbers[pos + 1]) {
-  //         temp = numbers[pos];
-  //         numbers[pos] = numbers[pos + 1];
-  //         numbers[pos + 1] = temp;
-  //         lastSwap = pos;
-  //       }
-  //       if (pos >= max) {
-  //         pos = max;
-  //         max = (lastSwap < max) ? lastSwap : max - 1;
-  //         goingUp = !goingUp;
-  //       } else
-  //         pos++;
-  //     } else {
-  //       if (numbers[pos] < numbers[pos - 1]) {
-  //         temp = numbers[pos];
-  //         numbers[pos] = numbers[pos - 1];
-  //         numbers[pos - 1] = temp;
-  //         lastSwap = pos;
-  //       }
-  //       if (pos <= min) {
-  //         pos = min;
-  //         min = (lastSwap > min) ? lastSwap : min + 1;
-  //         goingUp = !goingUp;
-  //       } else
-  //         pos--;
-  //     }
-  //   }
-  //   int start = 50, width = 1, height;
-  //   int cwh = can.getWindowHeight() - 20;
-  //   ColorFloat color;
-  //   can.pauseDrawing(); //Tell the Canvas to stop updating the screen temporarily
-  //   can.clearProcedural();
-  //   for (int i = 0; i < SIZE; i++, start += width * 2) {
-  //     height = numbers[i];
-  //     color = ColorInt(MAX_COLOR, (i == pos) ? MAX_COLOR : 0, 0);
-  //     can.drawRectangle(start, cwh - height, width, height, color);
-  //   }
-  //   can.resumeDrawing(); //Tell the Canvas it can resume drawing
-  // }
+  int pos = 0;
+  int temp;
+  int min = 1;
+  int max = data_elements - 1;
+  int lastSwap = 0;
+  bool goingUp = true;
+  const int IPF = 30;
+  // begin sorting
+  while (can->isOpen()) {
+    can->sleep();  //Removed the timer and replaced it with an internal timer in the Canvas class
+    if (min >= max) break;  // We are done sorting
+    for (int i = 0; i < IPF; i++) {
+      if (goingUp) {
+        if (numbers[pos] > numbers[pos + 1]) {
+          temp = numbers[pos];
+          numbers[pos] = numbers[pos + 1];
+          numbers[pos + 1] = temp;
+          lastSwap = pos;
+          if(playAudialization()) {
+            MidiNote note = Util::scaleToNote(numbers[pos], std::make_pair(0, getCanvasHeight()), std::make_pair(C3, C7));
+            voices.at(0).play(note, Timing::MICROSECOND, 20);
+          }
+        }
+        if (pos >= max) {
+          pos = max;
+          max = (lastSwap < max) ? lastSwap : max - 1;
+          goingUp = !goingUp;
+        } else
+          pos++;
+      } else {
+        if (numbers[pos] < numbers[pos - 1]) {
+          temp = numbers[pos];
+          numbers[pos] = numbers[pos - 1];
+          numbers[pos - 1] = temp;
+          lastSwap = pos;
+          if(playAudialization()) {
+            MidiNote note = Util::scaleToNote(numbers[pos], std::make_pair(0, getCanvasHeight()), std::make_pair(C3, C7));
+            voices.at(0).play(note, Timing::MICROSECOND, 20);
+          }
+        }
+        if (pos <= min) {
+          pos = min;
+          min = (lastSwap > min) ? lastSwap : min + 1;
+          goingUp = !goingUp;
+        } else
+          pos--;
+      }
+    }
+    int start = 0;
+    ColorFloat color;
+    can->pauseDrawing(); //Tell the Canvas to stop updating the screen temporarily
+    can->clearProcedural();
+    for (int i = 0; i < data_elements; i++, start += block_size) {
+      color = ColorInt(MAX_COLOR, (i == pos) ? MAX_COLOR : 0, 0);
+      if(showVisualization()) {
+        if(i < number_normal_block_size) {
+          can->drawRectangle(start, (cwh - numbers[i]), block_size, numbers[i], color);
+        }
+      }
+    }
+    can->resumeDrawing(); //Tell the Canvas it can resume drawing
+  }
 
 
-  // if(playAudialization()) {
-  //   voices.at(0).stop();
-  // }
+  if(playAudialization()) {
+    voices.at(0).stop();
+  }
 
-  // //after sorting turn data white
-  // if( showVisualization()) {
-  //   for (int i = 0; i < data_elements; i++) {
-  //     if(i < number_normal_block_size) {
-  //       can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color);
-  //     } else {
-  //       can->drawRectangle(((number_normal_block_size*block_size)+((i-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color);
-  //     }
-  //   }
+  //after sorting turn data white
+  if( showVisualization()) {
+    for (int i = 0; i < data_elements; i++) {
+      if(i < number_normal_block_size) {
+        can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color);
+      } else {
+        can->drawRectangle(((number_normal_block_size*block_size)+((i-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color);
+      }
+    }
 
-  //   can->wait();
-  // }
+    can->wait();
+  }
 
   delete[] numbers;
 
-
 }
+
 
 void ShakerSorter::run() {
   if (showVisualization()) {

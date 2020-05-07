@@ -15,8 +15,9 @@ using namespace avlib;
 int main(int argc, char **argv) {
 
   LinearSearch ls(argc, argv);
-  ls.run();  
-  //SortingAudialVisualization av(argc, argv);
+  ls.run();
+
+  // SortingAudialVisualization av(argc, argv);
 
   return 0;
 }

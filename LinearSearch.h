@@ -18,7 +18,7 @@ namespace avlib {
   class LinearSearch : public AudialVisualization {
   public:
     LinearSearch(int argc, char **argv);
-    void makeSearch(Canvas *can, std::vector<ThreadSynth> &voices, int data_elements);
+    void makeSearch(Canvas *can, std::vector<ThreadSynth> &voices, int data_elements, int search);
     void run();
   };
 

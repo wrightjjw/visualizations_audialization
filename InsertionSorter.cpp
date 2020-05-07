@@ -16,6 +16,7 @@ InsertionSorter::InsertionSorter(int argc, char** argv, bool value) : SortingAud
 
 }
 
+
 void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voices, int data_elements) {
   int cwh = getCanvasHeight();
   ColorFloat color = RED;
@@ -47,7 +48,8 @@ void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voice
   }
 
   int insertValue;
-  int j = 0;
+  int j;
+  int temp;
   // begin sorting
   for (int i = 1; i < data_elements; i++) {
     insertValue = numbers[i];
@@ -57,9 +59,6 @@ void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voice
       if(showVisualization()) {
         if(j < number_normal_block_size) {
           can->drawRectangle( (j*block_size), 0, block_size, cwh, bg );
-          can->drawRectangle( ((j-1)*block_size), 0, block_size, cwh, bg );
-        } else if(j == number_normal_block_size) {
-          can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), 0, block_size_plus_one, cwh, bg );
           can->drawRectangle( ((j-1)*block_size), 0, block_size, cwh, bg );
         } else {
           can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), 0, block_size_plus_one, cwh, bg);
@@ -71,15 +70,13 @@ void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voice
         MidiNote note = Util::scaleToNote(numbers[j], std::make_pair(0, getCanvasHeight()), std::make_pair(C3, C7));
         voices.at(0).play(note, Timing::MILLISECOND, 30);
       }
+
       numbers[j] = numbers[j - 1];
       if (showVisualization()) {
         can->sleep();
         if(j < number_normal_block_size) {
           can->drawRectangle( (j*block_size), (cwh-numbers[j]), block_size, numbers[j], color );
-          can->drawRectangle( ((j-1)*block_size), (cwh-numbers[j-1]), block_size, numbers[j-1], color );
-        } else if(j == number_normal_block_size) {
-          can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j]), block_size_plus_one, numbers[j], color );
-          can->drawRectangle( ((j-1)*block_size), (cwh-numbers[j-1]), block_size, numbers[j-1], color );
+          can->drawRectangle( ((j-1)*block_size), (cwh-insertValue), block_size, insertValue, color );
         } else {
           can->drawRectangle( ((j*number_normal_block_size)+((j-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j]), block_size_plus_one, numbers[j], color );
           can->drawRectangle( (((j-1)*number_normal_block_size)+((j-1)-number_normal_block_size)*block_size_plus_one), (cwh-numbers[j-1]), block_size_plus_one, numbers[j-1], color );
@@ -98,17 +95,16 @@ void InsertionSorter::InsertionSort(Canvas* can, std::vector<ThreadSynth>& voice
   // after sorting turn data white
   if (showVisualization()) {
     for (int i = 0; i < data_elements; i++) {
-      if(i < number_normal_block_size) {
-        can->drawRectangle( (i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color );
+      if( i < number_normal_block_size ) {
+        can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color);
       } else {
-        can->drawRectangle( ((i*number_normal_block_size)+((i-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color );
+        can->drawRectangle(((number_normal_block_size*block_size)+(((i-number_normal_block_size)*block_size_plus_one)) ), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color);
       }
     }
-  
+
     can->wait();
   }
 
-  can->wait();
   delete[] numbers;
 }
 

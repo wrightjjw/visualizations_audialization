@@ -63,9 +63,6 @@ AudialVisualization::AudialVisualization(int argc, char** argv) {
 
   if( result.count("sorting-algorithm") > 0 ) {
     setSortingAlgorithm(result["sorting-algorithm"].as<std::vector<std::string>>());
-  } else {
-    std::cout << "specify with a -s flag which sorting algorithm to run" << std::endl;
-    std::exit(0);
   }
 
   if (result["threads"].as<int>() > omp_get_num_procs()) {
