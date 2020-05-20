@@ -67,18 +67,6 @@ $(TARGET): $(OBJS)
 	@echo "\nLinking $(TARGET)..."
 	$(CC) $(OBJS) $(LFLAGS)
 	@echo
-
-# $(TARGET).o : main.cpp MergeSort.cpp
-# 	$(CC) -c main.cpp
-
-# MergeSort.o : MergeSort.cpp
-# 	$(CC) -c MergeSort.cpp
-
-# SortingAudialVisualizations.o : SortingAudialVisualizations.cpp
-# 	$(CC) -c SortingAudialVisualizations.cpp
-
-# AudialVisualization.o : AudialVisualization.cpp
-# 	$(CC) AudialVisualization.cpp $(CXXFLAGS)
 	
 #Compiling
 .cpp.o:
