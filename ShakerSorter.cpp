@@ -144,7 +144,6 @@ void ShakerSorter::run() {
 
     voices = std::vector<ThreadSynth>(1, ThreadSynth(mixer));
     mixer->add(voices[0]);
-    //voices[0].setVolume(0.5);
     voices[0].setEnvelopeActive(false);
   }
 

@@ -201,9 +201,6 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
               color = Colors::blend(sd[tid]->color, BLACK, 0.5f);
           }
           if (showVisualization()) {
-            // if( i <= getNumberNormalBlockSize() ) {   //add to this for varying block sizes
-            //   can->drawRectangle();
-            // }
             can->drawLine(start, cwh - height, start, cwh, color);
           }
         }

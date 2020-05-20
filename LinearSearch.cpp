@@ -79,10 +79,8 @@ namespace avlib {
         if(showVisualization()) {
           can->sleep();
           if( i < number_normal_block_size ) {
-            //can->drawRectangle( i*block_size, (cwh-numbers[i]), block_size, numbers[i], bg );
             can->drawRectangle( i*block_size, (cwh-numbers[i]), block_size, numbers[i], sort_done_color );
           } else {
-            //can->drawRectangle( ((number_normal_block_size*block_size)+(((i-number_normal_block_size)*block_size_plus_one)) ), (cwh-numbers[i]), block_size_plus_one, numbers[i], bg );
             can->drawRectangle( ((number_normal_block_size*block_size)+(((i-number_normal_block_size)*block_size_plus_one)) ), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color );
           }
         }
@@ -121,7 +119,6 @@ namespace avlib {
 
       voices = std::vector<ThreadSynth>(1, ThreadSynth(mixer));
       mixer->add(voices[0]);
-      //voices[0].setVolume(0.5);
       voices[0].setEnvelopeActive(false);
     }
 

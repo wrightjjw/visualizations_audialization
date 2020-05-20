@@ -18,7 +18,6 @@ namespace avlib {
 class InsertionSorter : public SortingAudialVisualization {
  public:
   InsertionSorter(int argc, char **argv, bool value = false);
-  //void InsertionSort(Canvas *can, std::vector<ThreadSynth> &voices, int size);
   void InsertionSort(Canvas *can, std::vector<ThreadSynth> &voices, int data_elements);
   void run();
 };

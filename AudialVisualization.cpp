@@ -49,7 +49,7 @@ AudialVisualization::AudialVisualization(int argc, char** argv) {
     setCanvasHeight(result["canvas-height"].as<int>());
   }
   if (result["canvas-width"].as<int>() > 0) {
-    if (result["canvas-width"].as<int>() < 100) {  // don't make the canvas any smaller than this
+    if (result["canvas-width"].as<int>() < 100) {
       setCanvasWidth(100);
     }
     setCanvasWidth(result["canvas-width"].as<int>());

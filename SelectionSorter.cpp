@@ -61,9 +61,6 @@ void SelectionSorter::SelectionSort(Canvas *can, std::vector<ThreadSynth> &voice
       if(min < number_normal_block_size) { //this isnt going to work well work well for odd data elemtns that don't divide evenly
         can->drawRectangle( (i*block_size), 0, block_size, cwh, bg );
         can->drawRectangle( (min*block_size), 0, block_size, cwh, bg  );
-      } else {
-        // can->drawRectangle(  );
-        // can->drawRectangle(  );
       }
     }
 
@@ -80,9 +77,6 @@ void SelectionSorter::SelectionSort(Canvas *can, std::vector<ThreadSynth> &voice
       if(min < number_normal_block_size) {
         can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], color);
         can->drawRectangle((min*block_size), (cwh-numbers[min]), block_size, numbers[min], color);
-      } else {
-        //can->drawRectangle(((number_normal_block_size*block_size)+(((j)-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j]), block_size_plus_one, numbers[j], color );
-        //can->drawRectangle(((number_normal_block_size*block_size)+(((j-1)-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[j-1]), block_size_plus_one, numbers[j-1], color);
       }
     }
 
@@ -97,8 +91,6 @@ void SelectionSorter::SelectionSort(Canvas *can, std::vector<ThreadSynth> &voice
     for (int i = 0; i < data_elements; i++) {
       if(i < number_normal_block_size) {
         can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], sort_done_color);
-      } else {
-        //can->drawRectangle(((number_normal_block_size*block_size)+((i-number_normal_block_size)*block_size_plus_one)), (cwh-numbers[i]), block_size_plus_one, numbers[i], sort_done_color);
       }
     }
   
@@ -121,7 +113,6 @@ void SelectionSorter::run() {
 
     voices = std::vector<ThreadSynth>(1, ThreadSynth(mixer));
     mixer->add(voices[0]);
-    //voices[0].setVolume(0.5);
     voices[0].setEnvelopeActive(false);
   }
 

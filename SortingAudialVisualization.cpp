@@ -60,13 +60,13 @@ SortingAudialVisualization::SortingAudialVisualization(int argc, char** argv, bo
 
 Canvas* SortingAudialVisualization::createCanvas(std::string canvas_name) {
   setCanvasWidth(getCanvasWidth() );
-  setCanvasHeight((getCanvasWidth() / 2)); //height = width/2 for sorts
-  canvas = new Canvas(0, 0, getCanvasWidth(), (getCanvasWidth() / 2), canvas_name);  // this could be bad.. because someone could make multiple maybe make singleton?
+  setCanvasHeight((getCanvasWidth() / 2));
+  canvas = new Canvas(0, 0, getCanvasWidth(), (getCanvasWidth() / 2), canvas_name);
   return canvas;
 }
 
 Mixer* SortingAudialVisualization::createMixer() {
-  mixer = new Mixer();  // this could be bad.. because someone could make multiple maybe make singleton?
+  mixer = new Mixer();
   return mixer;
 }
 
