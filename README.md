@@ -18,3 +18,11 @@ Usage: AudialVisualization [OPTION...]
 -t, --threads arg            number of threads to use for sorting algorithm (default: 1)
 
 -s, --sorting-algorithm arg  decide which sorting algorithm to run (argument options: 'bubble', 'insertion', 'merge', 'selection', 'shaker')
+
+
+# **Dependencies**
+- [TSGL](https://github.com/Calvin-CS/TSGL)
+
+- [TSAL](https://github.com/Calvin-CS/TSAL)
+
+- [CXXOPTS](https://github.com/jarro2783/cxxopts)
