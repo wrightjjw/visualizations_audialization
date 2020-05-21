@@ -13,7 +13,7 @@ Usage: AudialVisualization [OPTION...]
 
 -w, --canvas-width arg       TSGL canvas width (default: 1024)
 
--d, --data-amount arg        Number of data elements to sort. Only used when inheriting from SortingAudialVisualization. This            parameter must be less than or equal to canvas-width. Currently only works with powers of 2: 512, 256, 128, etc
+-d, --data-amount arg        Number of data elements to sort. Only used when inheriting from SortingAudialVisualization. This            parameter must be less than or equal to canvas-width. This flag should be evenly divisible by the canvas width: 512, 256, 128, etc
 
 -t, --threads arg            number of threads to use for sorting algorithm (default: 1)
 
