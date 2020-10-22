@@ -1,6 +1,7 @@
 #Target to make and objects needed
 TARGET = main
-OBJS = $(TARGET).o MergeSorter.o BubbleSorter.o InsertionSorter.o SortingAudialVisualization.o AudialVisualization.o SelectionSorter.o ShakerSorter.o LinearSearch.o
+# OBJS = $(TARGET).o MergeSorter.o BubbleSorter.o InsertionSorter.o SortingAudialVisualization.o AudialVisualization.o SelectionSorter.o ShakerSorter.o LinearSearch.o
+OBJS = $(TARGET).o MergeSorter.o SortingAudialVisualization.o AudialVisualization.o
 
 #Compiler, remove command, and OS we're working on
 CC = g++
@@ -38,7 +39,7 @@ CXXFLAGS=-c -O3 -g3 \
     ${OS_INCLUDE} \
     -I/usr/include/freetype2/ \
     -I/usr/include/freetype2/freetype  \
-    -I/usr/local/include/tsal/ \
+    -I/usr/include/tsal/ \
     -std=c++11 -fopenmp \
     -Wno-unused-function #Supress warnings
 
