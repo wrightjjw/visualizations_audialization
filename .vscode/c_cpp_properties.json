@@ -3,7 +3,11 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/TSGL",
+                "/usr/include/freetype2",
+                "/usr/include/freetype2/freetype",
+                "/usr/include/tsal"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
