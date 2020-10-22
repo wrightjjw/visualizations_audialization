@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/main",
-            "args": ["-a", "-v", "-d 32", "-s selection"],
+            "args": ["-a", "-v", "-d 32", "-s merge"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
