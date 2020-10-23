@@ -178,7 +178,9 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
       if (sd[tid]->state != S_HIDE) {
         // Draw a black rectangle over our portion of the screen to cover up the old drawing
         if (showVisualization()) {
-          can->drawRectangle(start, 0, sd[tid]->last - sd[tid]->first, cwh, bg);
+          Rectangle rec((start + sd[tid]->last - sd[tid]->first) / 2, cwh/2, 0, ((sd[tid]->last - sd[tid]-> first) - start), cwh, 0, 0, 0, bg);
+          can->add(&rec);
+          // can->drawRectangle(start, 0, sd[tid]->last - sd[tid]->first, cwh, bg);
         }
         for (int i = sd[tid]->first; i < sd[tid]->last; ++i, ++start) {
           height = numbers[i];
@@ -201,7 +203,9 @@ void MergeSorter::MergeSort(Canvas* can, std::vector<ThreadSynth>& voices, int t
               color = Colors::blend(sd[tid]->color, BLACK, 0.5f);
           }
           if (showVisualization()) {
-            can->drawLine(start, cwh - height, start, cwh, color);
+            Line l(start, (2*cwh - height) / 2, 0, height, 0, 0, 0, color);
+            can->add(&l);
+            // can->drawLine(start, cwh - height, start, cwh, color);
           }
         }
       }

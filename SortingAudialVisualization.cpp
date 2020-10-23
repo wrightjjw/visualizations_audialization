@@ -9,11 +9,11 @@
  */
 
 #include "SortingAudialVisualization.h"
-#include "BubbleSorter.h"
-#include "InsertionSorter.h"
+// #include "BubbleSorter.h"
+// #include "InsertionSorter.h"
 #include "MergeSorter.h"
-#include "SelectionSorter.h"
-#include "ShakerSorter.h"
+// #include "SelectionSorter.h"
+// #include "ShakerSorter.h"
 #include <cmath>
 
 namespace avlib {
@@ -32,25 +32,26 @@ SortingAudialVisualization::SortingAudialVisualization(int argc, char** argv, bo
   std::vector<std::string> sort_run_vector = getSortingAlgorithms();
 
   if( getMainThread() == true ) {
-    #pragma omp parallel num_threads( sort_run_vector.size() )
+    // #pragma omp parallel num_threads( sort_run_vector.size() )
     {
       int tid = omp_get_thread_num();
       
-      if(sort_run_vector.at(tid) == "bubble") {
-        BubbleSorter b(argc, argv);
-        b.run();
-      } else if(sort_run_vector.at(tid) == "insertion") {
-        InsertionSorter i(argc, argv);
-        i.run();
-      } else if(sort_run_vector.at(tid) == "merge") {
+      // if(sort_run_vector.at(tid) == "bubble") {
+      //   BubbleSorter b(argc, argv);
+      //   b.run();
+      // } else if(sort_run_vector.at(tid) == "insertion") {
+      //   InsertionSorter i(argc, argv);
+      //   i.run();
+      // } else 
+      if(sort_run_vector.at(tid) == "merge") {
         MergeSorter m(argc, argv);
         m.run();
-      } else if(sort_run_vector.at(tid) == "selection") {
-        SelectionSorter s(argc, argv);
-        s.run();
-      } else if(sort_run_vector.at(tid) == "shaker") {
-        ShakerSorter sh(argc, argv);
-        sh.run();
+      // } else if(sort_run_vector.at(tid) == "selection") {
+      //   SelectionSorter s(argc, argv);
+      //   s.run();
+      // } else if(sort_run_vector.at(tid) == "shaker") {
+      //   ShakerSorter sh(argc, argv);
+      //   sh.run();
       }
     }
   }

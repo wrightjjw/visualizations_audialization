@@ -40,7 +40,9 @@ void BubbleSorter::BubbleSort(Canvas *can, std::vector<ThreadSynth> &voices, int
   if (showVisualization()) {
     for (int i = 0; i < data_elements; i++) {
       if( i < number_normal_block_size ) {
-        can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], color);
+        Rectangle rec((i*block_size + block_size) / 2, cwh/2, 0, (block_size - i*block_size), 2*numbers[i] - cwh, 0, 0, 0, color);
+        can->add(&rec)
+        // can->drawRectangle((i*block_size), (cwh-numbers[i]), block_size, numbers[i], color);
       } else {
         can->drawRectangle(((number_normal_block_size*block_size)+(((i-number_normal_block_size)*block_size_plus_one)) ), (cwh-numbers[i]), block_size_plus_one, numbers[i], color);
       }
